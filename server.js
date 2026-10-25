@@ -1038,12 +1038,16 @@ async function startServer() {
   await mongoClientPromise;
   await seedProducts();
 
-  return new Promise((resolve) => {
-    server = app.listen(port, () => {
-      console.log(`ShopSphere listening on http://localhost:${port}`);
-      resolve(server);
-    });
+ return new Promise((resolve, reject) => {
+  const PORT = process.env.PORT || port;
+
+  server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`ShopSphere listening on port ${PORT}`);
+    resolve(server);
   });
+
+  server.on('error', reject);
+});
 }
 
 async function stopServer() {
